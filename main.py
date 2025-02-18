@@ -87,7 +87,7 @@ if __name__ == "__main__":
         }
         | prompt
         | llm
-        | ReActSingleInputOutputParser()  # This is a parser that will parse the agent's output into a structured format
+        | ReActSingleInputOutputParser()  # This is a parser that will parse the agent's output into a structured format with the following schema: {tool: str, tool_input: str, log: str}
     )
 
     agent_step = ""
