@@ -25,19 +25,22 @@ This creates a powerful loop of reasoning and action that leads to more reliable
 This implementation uses LangChain to create a ReAct agent with the following components:
 
 ### Tools
-The agent has access to custom tools including:
-- `get_text_length`: A tool that returns the length of a text string in characters
+The agent has access to the following custom tools:
+- `get_text_length`: A tool that returns the length of a text string in characters (strips whitespace and quotes)
 
 ### Key Components
 
 1. **Agent Setup**:
-   - Uses ChatOpenAI (GPT-4-mini) as the base LLM
+   - Uses ChatOpenAI (gpt-4o-mini) as the base LLM
    - Implements zero-temperature setting for deterministic outputs
-   - Uses custom callback handler for monitoring agent's progress
+   - Uses custom callback handler (`AgentCallbackHandler`) for monitoring agent's progress
+   - Implements tool finding functionality with `find_tool_by_name`
 
 2. **Prompt Template**:
    - Implements a chain-of-thought prompt template
-   - Includes few-shot examples in the format:
+   - Uses LangChain's built-in tool description rendering
+   - Configures appropriate stop sequences for tool execution
+   - Includes format guidance for:
      - Question
      - Thought
      - Action
@@ -46,9 +49,10 @@ The agent has access to custom tools including:
      - Final Answer
 
 3. **Agent Execution Flow**:
-   - Implements an iterative execution loop
+   - Implements an iterative execution loop until reaching `AgentFinish`
    - Uses `ReActSingleInputOutputParser` for structured output parsing
    - Maintains intermediate steps for tracking agent's reasoning process
+   - Properly handles tool execution and observation recording
 
 ## Requirements
 
@@ -69,11 +73,18 @@ The agent has access to custom tools including:
    python main.py
    ```
 
-The example implementation demonstrates the agent determining the length of the word 'DOG' in characters, showcasing the ReAct framework's reasoning and action capabilities.
+## Example Usage
+
+The current implementation demonstrates the agent determining the length of the word 'DOG' in characters. The agent:
+1. Receives the question
+2. Thinks about how to solve it
+3. Uses the `get_text_length` tool
+4. Processes the observation
+5. Provides the final answer
 
 ## Project Structure
 
-- `main.py`: Core implementation of the ReAct agent
+- `main.py`: Core implementation of the ReAct agent with tool definitions and execution loop
 - `callbacks.py`: Custom callback handler for agent monitoring
 - `.env`: Environment variables configuration (not tracked in git)
 
